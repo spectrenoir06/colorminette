@@ -1,0 +1,39 @@
+#!/usr/bin/python
+
+from os import popen
+import sys
+
+
+class bcolors:
+    HEADER      = '\033[95m'
+    OKBLUE      = '\033[94m'
+    OKGREEN     = '\033[92m'
+    WARNING     = '\033[93m'
+    FAIL        = '\033[91m'
+    ENDC        = '\033[0m'
+    BOLD        = '\033[1m'
+    UNDERLINE   = '\033[4m'
+
+error = 0
+
+if (len(sys.argv) == 1):
+    error = -1
+    f = popen("norminette")
+    sys.stdout.write(f.read())
+    exit(error)
+
+for v in sys.argv[1:]:
+    f = popen("norminette " + v)
+    l = f.readline()
+    while l:
+        if l[:5] == "Error":
+            sys.stdout.write(bcolors.FAIL + l + bcolors.ENDC)
+            error = error + 1
+        elif l[:7] == "Warning":
+            sys.stdout.write(bcolors.WARNING + l + bcolors.ENDC)
+            error = error + 1
+        else:
+            sys.stdout.write(bcolors.OKBLUE + l + bcolors.ENDC)
+        l = f.readline()
+    f.close()
+exit(error)
